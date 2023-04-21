@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Musics</title>
+  </head>
+  <body>
+    <style>
+      input {
+        margin: 10px 5px;
+      }
+    </style>
+    <h1>Музыка</h1>
+    <form name="musicForm" id="musicForm">
+    <div class="music">
+      <input type="text" name="musicName" id="name" placeholder="Название">
+      <input type="date" name="musicRelease" id="musicRelease" placeholder="Дата релиза">
+      <input type="text" name="musicFilePath" id="name" placeholder="Путь к файлу">
+
+      <select name="author" id="form-author">
+        <!--вставляется при помощи js-->
+      </select>
+      <select name="genre" id="form-genres">
+        <!--вставляется при помощи js-->
+      </select>
+    </div>
+    <input name="hasVideoclip" type="checkbox" id="hasVideoclip">
+    <label for="hasVideoclip">Есть видеоклип</label>
+      <div style="display: none;" id="video-clip">
+
+        <input type="date" name="videoRelease" id="videoRelease" placeholder="Дата релиза">
+        <input type="text" name="videoFilePath" id="videoFilepath" placeholder="Путь к файлу">
+        <input type="text" name="videoDirectBy" id="videoDirectBy" placeholder="Режиссер">
+
+      </div>
+      <input style="display: block;" type="submit" value="Сохранить" id="btn-submit">
+    </form>
+    <script src="js/site.js"></script>
+  </body>
+</html>
+
+
