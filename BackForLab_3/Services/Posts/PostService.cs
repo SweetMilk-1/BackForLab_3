@@ -35,5 +35,20 @@ namespace BackForLab_3.Services.Posts
                 throw;
             }
         }
+        public async Task<string> GetMaxId()
+        {
+            try
+            {
+                var docs = await _mongoContext.Database.GetCollection<BsonDocument>("Posts").
+                    Aggregate().
+                    Sort("{_id: -1}").
+                    ToListAsync();
+                return docs[0].GetValue("_id").AsObjectId.ToString();
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

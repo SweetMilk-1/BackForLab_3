@@ -1,10 +1,11 @@
+using BackForLab_3.Services;
 using BackForLab_3.Services.Cache;
 using BackForLab_3.Services.Converters;
 using BackForLab_3.Services.Dictionaries;
 using BackForLab_3.Services.MongoDb;
 using BackForLab_3.Services.Musics;
+using BackForLab_3.Services.Notifications;
 using BackForLab_3.Services.Posts;
-using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddStackExchangeRedisCache(options => {
 builder.Services.AddTransient<ICacheService, CacheService>();
 builder.Services.AddTransient<IDictionaryService, DictionaryService>();
 builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddSingleton<IMongoContext, MongoContext>();
 builder.Services.AddSingleton<IBsonConverter, BsonConverter>();
 builder.Services.AddSingleton<IMusicService, MusicService>();
