@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal;
-using BackForLab_3.Models.Dto.Post;
+﻿using BackForLab_3.Models.Dto.Post;
 using BackForLab_3.Models.Entities;
 using BackForLab_3.Services.Cache;
 using BackForLab_3.Services.Posts;
