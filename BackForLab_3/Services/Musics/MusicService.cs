@@ -28,7 +28,7 @@ namespace BackForLab_3.Services.Musics
         {
             await _mongoContext.Database.
                 GetCollection<BsonDocument>("Musics").
-                DeleteOneAsync(new BsonDocument ("_id", new ObjectId(id)));
+                DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }
         public async Task Update(string id, Music music)
         {
@@ -44,7 +44,7 @@ namespace BackForLab_3.Services.Musics
                GetCollection<BsonDocument>("Musics").
                Find($"{{_id : ObjectId('{id}')}}").
                ToListAsync();
-            
+
             if (musics.Count == 0)
                 throw new Exception("NotFound");
 
@@ -85,48 +85,9 @@ namespace BackForLab_3.Services.Musics
                 ToList().
                 Select(item => _bsonConverter.ConvertBsonToMusicWithPlaylists(item)).
                 ToArray()[0];
-
-            /*
-db.Musics.aggregate(
-  {
-    $match: {
-      _id:ObjectId("643ed64300000c000c000036")
-    }
-  },
-  {
-    $lookup: {
-      from:"Playlists",
-      pipeline: [
-        {
-          $unwind: "$Musics"
-        },
-        {
-          $match: {
-            Musics: ObjectId("643ed64300000c000c000036")
-          },
-        }, 
-        {
-          $project: {
-            "Musics":0, 
-            "User":0
-          }
-        }
-      ],
-      as: "Playlists"
-    }
-  },
-  {
-    $project: {
-      "Name":1,
-      "_id":1,
-      "Playlists": 1
-    }
-  }
-)
-             */
         }
         public async Task<IEnumerable<MusicWithVideoClipDto?>> GetMusicsForNotification()
-        {  
+        {
             return _mongoContext.Database.
                 GetCollection<BsonDocument>("Musics").
                 Aggregate().
@@ -135,42 +96,7 @@ db.Musics.aggregate(
                 Match("{ $or: [{VideoClip: null},{AutthorObject: {$elemMatch: {Description: ''}}}]}").
                 Project("{AuthorObject:0}").
                 ToList().
-                Select(item=>_bsonConverter.ConvertBsonToMusicWithVideoClip(item));
-            /*
- db.Musics.aggregate(
-  {
-    $lookup: {
-      from:"Authors",
-      localField:"Author",
-      foreignField:"_id",
-      as: "AuthorObject"
-    }
-  },
-  {
-    $unwind: "$AuthorObject"
-  },
-  {
-    $match: {
-      $or: [
-        {
-          VideoClip: null,
-        },{
-          AutthorObject: {
-            $elemMatch: {
-              Description: ""
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    $project: {
-      "AuthorObject":0
-    }
-  }
-)
-             */
+                Select(item => _bsonConverter.ConvertBsonToMusicWithVideoClip(item));
         }
         public async Task<double> GetGrade(string id)
         {
@@ -186,31 +112,6 @@ db.Musics.aggregate(
     }
 }
                 ").FirstOrDefault().GetValue("Grade").AsDouble;
-            /*
-db.Musics.aggregate(
-  {
-    $match: {
-      _id:ObjectId("643ed64300000c000c000036")
-    }
-  },
-  {
-    $lookup: {
-      from: "Grades",
-      localField:"_id",
-      foreignField:"Music",
-      as:"Grades"
-    }
-  },
-  {
-    $project: {
-      "Grade": {
-        $avg: "$Grades.Grade"
-      }
-    }
-  }
-);
-
-             */
         }
     }
 }

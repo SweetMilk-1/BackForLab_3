@@ -1,4 +1,6 @@
-﻿using BackForLab_3.Models.Entities;
+﻿using BackForLab_3.Models.Dto.Musics;
+using BackForLab_3.Models.Entities;
+using BackForLab_3.Services.Cache;
 using BackForLab_3.Services.Musics;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +12,11 @@ namespace BackForLab_3.Controllers
     public class MusicController:ControllerBase
     {
         private readonly IMusicService _musicService;
-        public MusicController(IMusicService musicService) { 
-            _musicService= musicService;
+        private readonly ICacheService _cacheService;
+        public MusicController(IMusicService musicService, ICacheService cacheService)
+        {
+            _musicService = musicService;
+            _cacheService = cacheService;
         }
 
         [Route("/music")]
@@ -70,7 +75,10 @@ namespace BackForLab_3.Controllers
             try
             {
                 HttpContext.Response.ContentType = "application/json";
+
+                
                 var result = await _musicService.GetMusicsForNotification();
+                
                 if (result == null)
                     return NotFound();
                 return Ok(result);
@@ -83,46 +91,84 @@ namespace BackForLab_3.Controllers
 
         [Route("/music/{id}/{type}")]
         [HttpGet]
-        public async Task<IActionResult> WithVideoClip(string id, string? type)
+        public async Task<IActionResult> GetMusic(string id, string? type)
         {
             var request = HttpContext.Request;
             var response = HttpContext.Response;
+            response.ContentType = "application/json";
             object result = null;
+            string key = String.Empty;
             try
             {
                 switch (type)
                 {
                     case "with-videoclip":
                         #region
-                        response.ContentType = "application/json";
-                        result = await _musicService.GetWithVideoClip(id);
+                        key = "MusicWithVideoclip_" + id;
+                        result = await _cacheService.Get<MusicWithVideoClipDto?>(key);
                         if (result == null)
-                            return NotFound();
-                        return Ok(result);
+                        {
+                            Console.WriteLine($"Кэширую {key}");
+                            return Ok(await _cacheService.Set(
+                                key,
+                                await _musicService.GetWithVideoClip(id)));
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Взял из кэша {key}");
+                            return Ok(result);
+                        }
                     #endregion
                     case "with-author":
                         #region
-                        response.ContentType = "application/json";
-                        result = await _musicService.GetWithAuthor(id);
+                        key = "MusicWithAuthor_" + id;
+                        result = await _cacheService.Get<MusicWithAuthorDto?>(key);
                         if (result == null)
-                            return NotFound();
-                        return Ok(result);
+                        {
+                            Console.WriteLine($"Кэширую {key}");
+                            return Ok(await _cacheService.Set(
+                                key,
+                                await _musicService.GetWithAuthor(id)));
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Взял из кэша {key}");
+                            return Ok(result);
+                        }
                     #endregion
                     case "with-playlists":
                         #region
-                        response.ContentType = "application/json";
-                        result = await _musicService.GetWithPlaylists(id);
+                        key = "MusicWithPlaylists_" + id;
+                        result = await _cacheService.Get<MusicWithPlaylistsDto?>(key);
                         if (result == null)
-                            return NotFound();
-                        return Ok(result);  
-                    #endregion
+                        {
+                            Console.WriteLine($"Кэширую {key}");
+                            return Ok(await _cacheService.Set(
+                                key,
+                                await _musicService.GetWithPlaylists(id)));
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Взял из кэша {key}");
+                            return Ok(result);
+                        }
+                        #endregion
                     case "grade":
                         #region
-                        response.ContentType = "application/json";
-                        result = await _musicService.GetGrade(id);
+                        key = "MusicGrade_" + id;
+                        result = await _cacheService.Get<int?>(key);
                         if (result == null)
-                            return NotFound();
-                        return Ok(result);
+                        {
+                            Console.WriteLine($"Кэширую {key}");
+                            return Ok(await _cacheService.Set(
+                                key,
+                                await _musicService.GetGrade(id)));
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Взял из кэша {key}");
+                            return Ok(result);
+                        }
                     #endregion
                     default:
                         return NotFound();

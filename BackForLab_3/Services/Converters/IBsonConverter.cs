@@ -12,5 +12,6 @@ namespace BackForLab_3.Services.Converters
         MusicWithVideoClipDto ConvertBsonToMusicWithVideoClip(BsonDocument music);
         MusicWithAuthorDto ConvertBsonToMusicWithAuthor(BsonDocument bson);
         MusicWithPlaylistsDto ConvertBsonToMusicWithPlaylists(BsonDocument bson);
+        BsonDocument ConvertPostToBson (Post post);
     }
 }

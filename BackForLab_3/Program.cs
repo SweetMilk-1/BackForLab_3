@@ -1,7 +1,9 @@
+using BackForLab_3.Services.Cache;
 using BackForLab_3.Services.Converters;
 using BackForLab_3.Services.Dictionaries;
 using BackForLab_3.Services.MongoDb;
 using BackForLab_3.Services.Musics;
+using BackForLab_3.Services.Posts;
 using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 #region My Services
+builder.Services.AddStackExchangeRedisCache(options => {
+    options.Configuration = "localhost";
+    options.InstanceName = "local";
+});
+builder.Services.AddTransient<ICacheService, CacheService>();
 builder.Services.AddTransient<IDictionaryService, DictionaryService>();
+builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddSingleton<IMongoContext, MongoContext>();
 builder.Services.AddSingleton<IBsonConverter, BsonConverter>();
 builder.Services.AddSingleton<IMusicService, MusicService>();
@@ -23,7 +31,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 }
 
 app.UseStaticFiles();

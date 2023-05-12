@@ -102,5 +102,17 @@ namespace BackForLab_3.Services.Converters
                 }).ToList()
             };
         }
+
+        public BsonDocument ConvertPostToBson(Post post)
+        {
+            return new BsonDocument
+            {
+                { "_id", new ObjectId()},
+                { "AuthorId", post.AuthorId },
+                { "Text", post.Text},
+                { "DateTimeCreated", new BsonDateTime(post.DateTimeCreated) },
+                { "LikedUsers", new BsonArray(post.LikedUsers)}
+            };
+        }
     }
 }
